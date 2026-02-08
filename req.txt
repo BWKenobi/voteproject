@@ -1,4 +1,4 @@
-asgiref==3.11.1
+asgiref
 Django==3.2.20
 pytz==2025.2
 six==1.17.0
