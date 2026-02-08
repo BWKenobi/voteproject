@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load objects_extras %}
+{% load static %}
+
+{% block content %}
+	<div class="row align-middle px-5">
+		<div class="col-md-6">
+			<b>Пункты голосований</b>
+		</div>
+		<div class="col-md-6 text-right">
+			<input type="button" value="Добавить" name="add-theme" id="add_theme" class="show-loader">
+		</div>
+	</div>
+
+	<div class="text-left mt-3 px-5">
+		<table class="table">
+			<thead>
+				<tr>
+					<th scope="col" class="table-cel-width-5 align-middle">№</th>
+					<th scope="col" class="table-cel-width-25 align-middle">Блок</th>
+					<th scope="col" class="table-cel-width-50 align-middle">Название</th>
+					<th scope="col" class="table-cel-width-20 align-middle text-center"></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for votepart in voteparts %}
+					<tr class="">
+						<th scope="row" class="align-middle">{{ votepart.number }}</th>
+						<td class="align-middle">{{ votepart.theme.title }}</td>
+						<td class="align-middle">{{ votepart.name }}<br><em>{{ votepart.sub_name }}</em></td>
+						<td class="align-middle text-right"><a href="{% url 'publicvotes:edit_votepart' pk=votepart.pk %}" class="mr-2">изменить</a><a href="{% url 'publicvotes:delete_votepart' pk=votepart.pk %}">удалить</a></td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+{% endblock %}
+
+{% block scripts %}
+	{{ block.super }}
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('#add_theme').click(function (){
+				window.location.href = "{% url 'publicvotes:add_votepart' %}";
+			});
+		});
+
+	</script>
+{% endblock %}

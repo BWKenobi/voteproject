@@ -1,0 +1,305 @@
+{% load objects_extras %}
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Голосование</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="apple-touch-icon" href="{% static 'img/logo.png' %}" sizes="180x180">
+  <link rel="icon" href="{% static 'img/logo.png' %}" sizes="32x32" type="image/png">
+  <link rel="icon" href="{% static 'img/logo.png' %}" sizes="16x16" type="image/png">
+  
+  <style>
+    :root {
+      --bg-dark: #0b0f14;
+      --card-bg: rgba(255,255,255,0.06);
+      --accent: #d4af37;
+      --accent-soft: rgba(212,175,55,0.25);
+      --text-main: #f2f2f2;
+      --text-muted: #a0a0a0;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top, rgba(255,255,255,0.05), transparent 60%),
+        linear-gradient(to bottom, #0b0f14, #05070a);
+      color: var(--text-main);
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 18px 16px 12px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    header p {
+      margin: 6px 0 0;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .list {
+      padding: 12px 14px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 14px;
+      padding: 14px 14px 14px 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+    }
+
+    .card.selected {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent-soft),
+                  0 10px 30px rgba(212,175,55,0.25);
+    }
+
+    .card.disabled {
+      opacity: 0.45;
+      pointer-events: none;
+    }
+
+    .text {
+      font-size: 0.9rem;
+      line-height: 1.25em;
+    }
+
+    .number {
+      font-weight: 600;
+      color: var(--accent);
+      margin-right: 6px;
+    }
+
+    .vote-btn {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+      margin-left: 1em;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 1rem;
+      color: var(--text-muted);
+      padding-top: 0;
+    }
+
+    .thankyou {
+      display: none;
+      padding: 32px 20px;
+      text-align: center;
+    }
+
+    .thankyou h2 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: var(--accent);
+    }
+
+    .cookie-banner {
+      position: fixed;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: 520px;
+      width: calc(100% - 28px);
+      background: rgba(15, 20, 28, 0.92);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      z-index: 1000;
+    }
+
+    .cookie-text {
+      font-size: 0.75rem;
+      line-height: 1.3em;
+      color: var(--text-muted);
+    }
+
+    .cookie-btn {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .cookie-btn:hover {
+      background: var(--accent-soft);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>{{ theme.title }}</h1>
+  <p id="comment">Выберите один номер</p>
+</header>
+
+<div class="list" id="list"></div>
+
+<div class="thankyou" id="thanks">
+  <h2>Спасибо!</h2>
+  <p>Ваш голос принят</p>
+</div>
+
+<footer>
+  Концертное голосование
+</footer>
+
+{% if cookie_flag %}
+<div class="cookie-banner" id="cookieBanner">
+  <div class="cookie-text">
+    Мы используем файлы cookie для корректной работы голосования.
+    Продолжая, вы соглашаетесь с их использованием.
+  </div>
+  <button class="cookie-btn" id="cookieAccept">Хорошо</button>
+</div>
+{% endif %}
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
+<script>
+  const items = [
+    {% for vote_part in vote_parts %}
+      '<b data-pk="{{ vote_part.pk }}">{{ vote_part.name }}</b><br><em>{{ vote_part.sub_name }}</em>',
+    {% endfor %}
+  ];
+
+  const list = document.getElementById("list");
+  let voted = false;
+
+  {% if vote_count %}
+    document.getElementById("list").style.display = "none";
+    document.getElementById("comment").style.display = "none";
+    document.getElementById("thanks").style.display = "block";
+  {% else %}
+  
+    items.forEach((text, i) => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <div class="text">
+          <span class="number">${i + 1}.</span>${text}
+        </div>
+        <div class="vote-btn">Голосовать</div>
+      `;
+
+      card.onclick = () => {
+        if (voted) return;
+
+        voted = true;
+        card.classList.add("selected");
+
+        pk = '';
+        document.querySelectorAll(".card").forEach(c => {
+          if (c !== card) 
+            c.classList.add("disabled");
+          else{
+            pk = $(c).find('b').attr('data-pk');
+          }
+        });
+
+        if (pk != ''){
+          var formData = new FormData();
+          formData.append('pk', pk);
+
+          $.ajax({
+            url: "{% url 'publicvotes:ajax_add_vote' %}",
+            type: 'POST',
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function(data) { 
+              document.getElementById("list").style.display = "none";
+              document.getElementById("comment").style.display = "none";
+              document.getElementById("thanks").style.display = "block";
+            },
+          });
+        }
+
+
+        // 🔗 Здесь отправка голоса на сервер
+        // fetch("/vote", { method: "POST", body: JSON.stringify({ id: i }) })
+
+        // setTimeout(() => {
+        //   document.getElementById("list").style.display = "none";
+        //   document.getElementById("thanks").style.display = "block";
+        // }, 600);
+      };
+
+      list.appendChild(card);
+    });
+  {% endif %}
+
+  const banner = document.getElementById("cookieBanner");
+  const acceptBtn = document.getElementById("cookieAccept");
+
+  if (localStorage.getItem("cookieAccepted")) {
+    banner.style.display = "none";
+  }
+
+  acceptBtn.onclick = () => {
+    // localStorage.setItem("cookieAccepted", "yes");
+    banner.style.display = "none";
+
+    $('#cookie-banner').addClass('hide-cookie');
+
+    $.ajax({
+        url: "{% url 'ajax_allow_cookies' %}",
+        success: function(data){
+        }
+    });
+
+  };
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load objects_extras %}
+{% load static %}
+
+{% block content %}
+	<div class="row align-middle p-5">
+		<div class="col-md-6" style="font-size: 24px;">
+			<b>Результаты</b>
+		</div>
+	</div>
+
+	{% for theme in themes %}
+		<div class="row align-middle px-5">
+			<div class="col-md-6">
+				<b>{{ theme.title }}</b>
+			</div>
+		</div>
+		<div class="text-left mt-3 px-5">
+			<table class="table">
+				<thead>
+					<tr>
+						<th scope="col" class="table-cel-width-5 align-middle">№</th>
+						<th scope="col" class="table-cel-width-75 align-middle">Название</th>
+						<th scope="col" class="table-cel-width-20 align-middle text-center">Оценка</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% with sorted_counts|lookup:theme.pk as sorted_counts %}
+					{% for key, val in sorted_counts.items %}
+						<tr class="">
+							<th scope="row" class="align-middle">{{ key.number }}</th>
+							<td class="align-middle">{{ key.name }}<br><em>{{ key.sub_name }}</em></td>
+							<td class="align-middle text-right">{{ val }}</td>
+						</tr>
+					{% endfor %}
+					{% endwith %}
+				</tbody>
+			</table>
+		</div>
+	{% endfor %}
+{% endblock %}
+
+{% block scripts %}
+	{{ block.super }}
+
+{% endblock %}

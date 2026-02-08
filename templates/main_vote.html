@@ -1,0 +1,152 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Голосование зрителей</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="apple-touch-icon" href="{% static 'img/logo.png' %}" sizes="180x180">
+  <link rel="icon" href="{% static 'img/logo.png' %}" sizes="32x32" type="image/png">
+  <link rel="icon" href="{% static 'img/logo.png' %}" sizes="16x16" type="image/png">
+
+  <link rel="stylesheet" type="text/css" href="{% static 'css/concerted.css' %}">
+  <script src="{% static 'js/qrcode.min.js' %}"></script>
+</head>
+<body>
+
+<div class="overlay"></div>
+
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="title">Голосуем за лучший номер!</div>
+  </div>
+
+  <!-- LIST -->
+  <div class="content">
+    <div class="column" id="left"></div>
+    <div class="column" id="right"></div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="timer-block" style="margin-left: 100px">
+      <div class="timer" id="timer">05:00</div>
+      <div class="timer-label">до окончания голосования</div>
+    </div>
+
+    <div class="qr-block">
+      <!-- <div class="qr-text">
+        Наведите камеру<br>
+        для голосования
+      </div> -->
+      <div class="qr" id="qrcode"></div>
+    </div>
+
+    <div class="timer-block" style="margin-right: 100px; text-align: right;">
+      <div class="timer" id="timer_2">05:00</div>
+      <div class="timer-label">до окончания голосования</div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
+
+<script>
+  const items = [
+    "Попурри «Калиновый мост», «В хороводе были мы»<br><span class='ansamble'>ансамбль «Вербочка»</span>",
+    "«По секрету всему свету» — ансамбль «Карамельки»",
+    "«Как рождается музыка» — хор «Подснежник»",
+    "«Adiemus» — Хор Молодежи и Студентов",
+    "«Травиата» — Академический хор",
+    "«Ой, как по лугу» — хор «Русская песня»",
+    "«Не пора ли позабыть печали» — хор «Сударушка»",
+    "«Главное, ребята, сердцем не стареть» — ансамбль «Фронтовые песни»",
+    "«Белая ночь» — ансамбль «Голоса»"
+  ];
+
+  const votes = Array(items.length).fill(0);
+  const left = document.getElementById("left");
+  const right = document.getElementById("right");
+
+  const half = Math.ceil(items.length / 2);
+
+  const cards = [];
+
+items.forEach((text, i) => {
+  const div = document.createElement("div");
+  div.className = "item";
+  div.dataset.index = i;
+  div.innerHTML = `
+    <div class="text"><span class="number">${i + 1}.</span> ${text}</div>
+    <div class="votes" id="v${i}">0</div>
+  `;
+  cards.push(div);
+});
+renderColumns();
+
+function renderColumns() {
+  // очистка колонок
+  left.innerHTML = "";
+  right.innerHTML = "";
+
+  // сортировка по голосам (по убыванию)
+  cards.sort((a, b) => {
+    return votes[b.dataset.index] - votes[a.dataset.index];
+  });
+
+  const half = Math.ceil(cards.length / 2);
+
+  cards.forEach((card, i) => {
+    if (i < half) {
+      left.appendChild(card);
+    } else {
+      right.appendChild(card);
+    }
+  });
+}
+
+  // DEMO-голоса
+  setInterval(() => {
+  const i = Math.floor(Math.random() * votes.length);
+  votes[i]++;
+  document.getElementById("v" + i).textContent = votes[i];
+
+  renderColumns();
+}, 1300);
+
+  // TIMER
+  let seconds = 5 * 60;
+  const timerEl = document.getElementById("timer");
+  const timerEl_2 = document.getElementById("timer_2");
+
+  setInterval(() => {
+    const m = String(Math.floor(seconds / 60)).padStart(2, "0");
+    const s = String(seconds % 60).padStart(2, "0");
+    timerEl.textContent = `${m}:${s}`;
+    timerEl_2.textContent = `${m}:${s}`;
+    if (seconds > 0) seconds--;
+  }, 1000);
+
+  // QR
+  new QRCode(document.getElementById("qrcode"), {
+    text: "https://example.com/vote",
+    width: 800,
+    height: 800
+  });
+
+  $('#qrcode img').click(function(){
+    if ($(this).hasClass('qr-scale'))
+      $(this).removeClass('qr-scale');
+    else
+      $(this).addClass('qr-scale');
+
+  });
+</script>
+
+</body>
+</html>
