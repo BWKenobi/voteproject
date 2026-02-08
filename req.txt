@@ -2,5 +2,5 @@ asgiref
 Django==3.2.20
 pytz==2025.2
 six==1.17.0
-sqlparse==0.5.5
+sqlparse
 typing_extensions==4.15.0
