@@ -62,7 +62,7 @@
 <script>
   const items = [
     {% for vote_part in vote_parts %}
-    "<div class='text'><span class='number'>{{ vote_part.number}}.</span> {{ vote_part.name }}<br><span class='ansamble'>{{ vote_part.sub_name }}</span></div><div class='votes' id='v{{ forloop.counter }}' data-pk='{{ vote_part.pk }}'>{{ vote_counts|lookup:vote_part.pk }}</div>",
+    "<div class='text'><span class='number'>{{ vote_part.number}}.</span> {{ vote_part.name }} - <span class='ansamble'>{{ vote_part.sub_name }}</span></div><div class='votes' id='v{{ forloop.counter }}' data-pk='{{ vote_part.pk }}'>{{ vote_counts|lookup:vote_part.pk }}</div>",
     {% endfor %}
   ];
 
