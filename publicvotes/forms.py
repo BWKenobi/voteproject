@@ -10,7 +10,7 @@ from .models import Theme, VotePart
 class ThemeForm(forms.ModelForm):
 	class Meta:
 		model = Theme
-		fields = ('number', 'title', )
+		fields = ('number', 'title', 'count')
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)

@@ -25,7 +25,7 @@
 				{% for theme in themes %}
 					<tr class="">
 						<th scope="row" class="align-middle">{{ theme.number }}</th>
-						<td class="align-middle">{{ theme.title }}</td>
+						<td class="align-middle">{{ theme.title }} <em>({{ theme.count }} сек.)</em></td>
 						<td class="align-middle text-right"><a href="{% url 'publicvotes:edit_theme' pk=theme.pk %}" class="mr-2">изменить</a><a href="{% url 'publicvotes:delete_theme' pk=theme.pk %}">удалить</a></td>
 					</tr>
 				{% endfor %}

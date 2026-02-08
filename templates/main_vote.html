@@ -1,3 +1,4 @@
+{% load objects_extras %}
 {% load static %}
 
 <!DOCTYPE html>
@@ -20,7 +21,7 @@
 <div class="wrapper">
 
   <!-- HEADER -->
-  <div class="header">
+  <div class="header" data-token="{{ theme_token }}">
     <div class="title">Голосуем за лучший номер!</div>
   </div>
 
@@ -33,21 +34,23 @@
   <!-- FOOTER -->
   <div class="footer">
     <div class="timer-block" style="margin-left: 100px">
-      <div class="timer" id="timer">05:00</div>
+      <div class="timer" id="timer"></div>
       <div class="timer-label">до окончания голосования</div>
     </div>
 
-    <div class="qr-block">
+    
+
+    <div class="timer-block" style="margin-right: 100px; text-align: right;">
+      <div class="timer" id="timer_2"></div>
+      <div class="timer-label">до окончания голосования</div>
+    </div>
+
+    <div class="qr-block qr-hide">
       <!-- <div class="qr-text">
         Наведите камеру<br>
         для голосования
       </div> -->
       <div class="qr" id="qrcode"></div>
-    </div>
-
-    <div class="timer-block" style="margin-right: 100px; text-align: right;">
-      <div class="timer" id="timer_2">05:00</div>
-      <div class="timer-label">до окончания голосования</div>
     </div>
   </div>
 
@@ -58,35 +61,48 @@
 
 <script>
   const items = [
-    "Попурри «Калиновый мост», «В хороводе были мы»<br><span class='ansamble'>ансамбль «Вербочка»</span>",
-    "«По секрету всему свету» — ансамбль «Карамельки»",
-    "«Как рождается музыка» — хор «Подснежник»",
-    "«Adiemus» — Хор Молодежи и Студентов",
-    "«Травиата» — Академический хор",
-    "«Ой, как по лугу» — хор «Русская песня»",
-    "«Не пора ли позабыть печали» — хор «Сударушка»",
-    "«Главное, ребята, сердцем не стареть» — ансамбль «Фронтовые песни»",
-    "«Белая ночь» — ансамбль «Голоса»"
+    {% for vote_part in vote_parts %}
+    "<div class='text'><span class='number'>{{ vote_part.number}}.</span> {{ vote_part.name }}<br><span class='ansamble'>{{ vote_part.sub_name }}</span></div><div class='votes' id='v{{ forloop.counter }}' data-pk='{{ vote_part.pk }}'>{{ vote_counts|lookup:vote_part.pk }}</div>",
+    {% endfor %}
   ];
 
-  const votes = Array(items.length).fill(0);
+  // const votes = Array(items.length).fill(0);
   const left = document.getElementById("left");
   const right = document.getElementById("right");
 
   const half = Math.ceil(items.length / 2);
 
   const cards = [];
+  const votes = {};
+
+// items.forEach((text, i) => {
+//   const div = document.createElement("div");
+//   div.className = "item";
+//   div.dataset.index = i;
+//   div.innerHTML = text;
+//   cards.push(div);
+// });
 
 items.forEach((text, i) => {
   const div = document.createElement("div");
   div.className = "item";
   div.dataset.index = i;
-  div.innerHTML = `
-    <div class="text"><span class="number">${i + 1}.</span> ${text}</div>
-    <div class="votes" id="v${i}">0</div>
-  `;
+
+  // достаём pk из вложенного .votes
+  const tmp = document.createElement("div");
+  tmp.innerHTML = text;
+  const pk = tmp.querySelector('.votes').dataset.pk;
+
+  div.dataset.pk = pk;
+  div.innerHTML = text;
+
   cards.push(div);
 });
+
+
+// $('.item').each(function(){
+//   $('this').attr('data-index', $(this).find('.votes').attr('id').slice(1));
+// });
 renderColumns();
 
 function renderColumns() {
@@ -95,9 +111,13 @@ function renderColumns() {
   right.innerHTML = "";
 
   // сортировка по голосам (по убыванию)
+  // cards.sort((a, b) => {
+  //   return votes[b.dataset.index] - votes[a.dataset.index];
+  // });
+
   cards.sort((a, b) => {
-    return votes[b.dataset.index] - votes[a.dataset.index];
-  });
+  return (votes[b.dataset.pk] || 0) - (votes[a.dataset.pk] || 0);
+});
 
   const half = Math.ceil(cards.length / 2);
 
@@ -111,13 +131,13 @@ function renderColumns() {
 }
 
   // DEMO-голоса
-  setInterval(() => {
-  const i = Math.floor(Math.random() * votes.length);
-  votes[i]++;
-  document.getElementById("v" + i).textContent = votes[i];
+  // setInterval(() => {
+  //   const i = Math.floor(Math.random() * votes.length);
+  //   votes[i]++;
+  //   document.getElementById("v" + i).textContent = votes[i];
 
-  renderColumns();
-}, 1300);
+  //   renderColumns();
+  // }, 1300);
 
   // TIMER
   let seconds = 5 * 60;
@@ -125,16 +145,51 @@ function renderColumns() {
   const timerEl_2 = document.getElementById("timer_2");
 
   setInterval(() => {
-    const m = String(Math.floor(seconds / 60)).padStart(2, "0");
-    const s = String(seconds % 60).padStart(2, "0");
-    timerEl.textContent = `${m}:${s}`;
-    timerEl_2.textContent = `${m}:${s}`;
-    if (seconds > 0) seconds--;
+    m = String(Math.floor(seconds / 60)).padStart(2, "0");
+    s = String(seconds % 60).padStart(2, "0");
+
+    $.ajax({
+      url: "{% url 'ajax_get_data' %}",
+      success: function(data){
+        data = $.parseJSON(data);
+
+        if (data['theme_token'] != $('.header').attr('data-token'))
+          document.location.reload();
+
+        m = String(Math.floor(data['seconds'] / 60)).padStart(2, "0");
+        s = String(data['seconds'] % 60).padStart(2, "0");
+
+        timerEl.textContent = `${m}:${s}`;
+        timerEl_2.textContent = `${m}:${s}`;
+
+        if (data['active'])
+          $('.qr-block').removeClass('qr-hide');
+        else
+          $('.qr-block').addClass('qr-hide');
+
+        if (data['zoom'])
+          $('.qr-block #qrcode img').addClass('qr-scale');
+        else
+          $('.qr-block #qrcode img').removeClass('qr-scale');
+
+        
+        // for (const [key, value] of Object.entries(data['vote_counts'])) {
+        //   $('.votes[data-pk=' + key + ']').text(value);
+        // }
+
+        for (const [key, value] of Object.entries(data['vote_counts'])) {
+  votes[key] = value;
+  $('.votes[data-pk=' + key + ']').text(value);
+}
+
+        renderColumns();
+      }
+    });
   }, 1000);
 
   // QR
   new QRCode(document.getElementById("qrcode"), {
-    text: "https://example.com/vote",
+    text: "{{ url }}",
     width: 800,
     height: 800
   });

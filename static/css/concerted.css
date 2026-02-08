@@ -17,6 +17,8 @@ body {
 	background-attachment: fixed;
 
 	overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .overlay {
@@ -85,6 +87,8 @@ body {
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 48px;
+
+  flex: 1 0 auto;
 }
 
 .column {
@@ -136,11 +140,11 @@ body {
 
 /* ===== FOOTER ===== */
 .footer {
-  margin-top: 28px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 100px;
+  flex-shrink: 0;
 }
 
 .timer-block {
@@ -158,6 +162,7 @@ body {
   font-size: 24px;
   opacity: 0.8;
   margin-top: 6px;
+  text-shadow: 2px 2px 2px #000000;
 }
 
 .qr-block {
@@ -186,6 +191,11 @@ body {
 /* Исправлено: qr_scale → .qr-scale */
 .qr-scale {
   height: 70vh !important;
+  z-index: 2000;
+}
+
+.qr-hide{
+  opacity: 0;
 }
 
 .qr-text {

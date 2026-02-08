@@ -30,6 +30,9 @@ class Theme(models.Model):
 	current = models.BooleanField("Текущее голосования", default=False)
 	active = models.BooleanField("Активное голосования", default=False)
 
+	zoom = models.BooleanField("Активное голосования", default=False)
+	count = models.DecimalField(verbose_name="Номер", max_digits=4, decimal_places=0, default=180, blank=False)
+
 	theme_token = models.CharField(verbose_name="Токен", max_length=250, blank=True)
 
 	registration_date = models.DateField(verbose_name="Дата создания", default=date.today)

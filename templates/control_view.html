@@ -4,15 +4,17 @@
 
 {% block content %}
 	<div class="row align-middle p-5">
-		<div class="col-md-6" style="font-size: 24px;">
-			<b>Результаты</b>
+		<div class="col-md-12" style="font-size: 24px;">
+			<b>Результаты</b> <button type="button" class="btn {% if zoom %}btn-primary{% else %}btn btn-secondary{% endif %} zoom" style="float: right;">ZOOM</button>
 		</div>
 	</div>
 
 	{% for theme in themes %}
 		<div class="row align-middle px-5">
-			<div class="col-md-6">
-				<b>{{ theme.title }}</b>
+			<div class="col-md-12">
+				<b>{{ theme.title }}</b><em> ({{ theme.count }} сек.)</em>
+				<button type="button" class="btn {% if theme.current %}btn-primary{% else %}btn btn-secondary{% endif %} current" style="float: right;" data-pk="{{ theme.pk }}">Акивное</button>
+					<button type="button" class="btn {% if theme.active %}btn-primary{% else %}btn btn-secondary{% endif %} active_theme" style="float: right; margin-right: 20px;" data-pk="{{ theme.pk }}">СТАРТ</button>
 			</div>
 		</div>
 		<div class="text-left mt-3 px-5">
@@ -42,5 +44,83 @@
 
 {% block scripts %}
 	{{ block.super }}
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('.zoom').click(function(){
+				if ($(this).hasClass('btn-primary')){
+					url = "{% url 'ajax_unzoom' %}";
+					$(this).removeClass('btn-primary');
+					$(this).addClass('btn-secondary');
+				}else{
+					url = "{% url 'ajax_zoom' %}";
+					$(this).addClass('btn-primary');
+					$(this).removeClass('btn-secondary');
+				}
 
+				$.ajax({
+					url: url,
+					success: function(data){
+					}
+				});
+			});
+
+			$('.current').click(function(){
+				if ($(this).hasClass('btn-secondary')){
+					pk = $(this).attr('data-pk');
+
+					$('.current').removeClass('btn-primary')
+					$('.current').addClass('btn-secondary')
+
+					$(this).addClass('btn-primary')
+					$(this).removeClass('btn-secondary')
+
+					var formData = new FormData();
+					formData.append('pk', pk);
+
+					$.ajax({
+					url: "{% url 'ajax_current' %}",
+						type: 'POST',
+						data: formData,
+						cache: false,
+						contentType: false,
+						processData: false,
+						success: function(data) { 
+						},
+					});
+				}
+			});
+
+			$('.active_theme').click(function(){
+				if ($(this).hasClass('btn-secondary')){
+					url = "{% url 'ajax_active' %}";
+					$('.active_theme').removeClass('btn-primary')
+					$('.active_theme').addClass('btn-secondary')
+
+					$(this).addClass('btn-primary')
+					$(this).removeClass('btn-secondary')
+				}else{
+					url = "{% url 'ajax_deactive' %}";
+					$('.active_theme').removeClass('btn-primary')
+					$('.active_theme').addClass('btn-secondary')
+				}
+
+				pk = $(this).attr('data-pk');
+
+				var formData = new FormData();
+				formData.append('pk', pk);
+
+				$.ajax({
+				url: url,
+					type: 'POST',
+					data: formData,
+					cache: false,
+					contentType: false,
+					processData: false,
+					success: function(data) { 
+					},
+				});
+
+			});
+		});
+	</script>
 {% endblock %}

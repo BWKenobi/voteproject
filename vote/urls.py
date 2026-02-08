@@ -31,4 +31,12 @@ urlpatterns += [
 
 urlpatterns += [
     path('ajax/allow-cookies/', allow_cookies, name = 'ajax_allow_cookies'),
+    path('ajax/zoom/', zoom, name = 'ajax_zoom'),
+    path('ajax/unzoom/', unzoom, name = 'ajax_unzoom'),
+
+    path('ajax/current/', current, name = 'ajax_current'),
+    path('ajax/active/', active, name = 'ajax_active'),
+    path('ajax/deactive/', deactive, name = 'ajax_deactive'),
+
+    path('ajax/get_data/', get_data, name = 'ajax_get_data'),
 ]
