@@ -150,6 +150,7 @@ body {
 
 .timer-block {
   text-align: left;
+  opacity: 0;
 }
 
 .timer {
