@@ -307,7 +307,7 @@ def get_data(request):
 		if theme.active:
 			data['seconds'] = int(theme.count)
 		else:
-			data['seconds'] = 180
+			data['seconds'] = 0
 		vote_counts = {}
 		vote_parts = VotePart.objects.filter(theme = theme)
 		for vote_part in vote_parts:
