@@ -116,7 +116,7 @@ body {
 }
 
 .text {
-  font-size: 26px;
+  font-size: 32px;
   line-height: 1.25;
   max-width: 82%;
   color: #e7d4bc;
@@ -131,11 +131,12 @@ body {
 }
 
 .votes {
-  font-size: 46px;
+  font-size: 72px;
   font-weight: 700;
   color: #ffd36a;
   min-width: 80px;
   text-align: right;
+  line-height: 32px;
 }
 
 /* ===== FOOTER ===== */
