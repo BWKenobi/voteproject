@@ -69,9 +69,12 @@ def control_view(request):
 	themes = Theme.objects.all().order_by('number')
 	sorted_counts = {}
 	zoom = False
+	show_timer = False
 	for theme in themes:
 		if theme.zoom:
 			zoom = True
+		if theme.show_timer:
+			show_timer = True
 
 		votepart_counts = {}
 		voteparts= VotePart.objects.filter(theme = theme).order_by('number')
@@ -85,7 +88,8 @@ def control_view(request):
 		'themes': themes,
 		'votepart_counts': votepart_counts,
 		'sorted_counts': sorted_counts,
-		'zoom': zoom
+		'zoom': zoom,
+		'show_timer': show_timer,
 	}
 
 	return render(request, 'control_view.html', args)
@@ -205,6 +209,34 @@ def unzoom(request):
 	return HttpResponse('1')
 
 
+def set_show_timer(request):
+	if not request.user.is_authenticated:
+		return HttpResponse('', status = 500)
+
+	if not request.user.profile.admin_access:
+		return HttpResponse('', status = 500)
+
+	themes = Theme.objects.all().order_by('number')
+	for theme in themes:
+		theme.show_timer = True
+		theme.save()
+	return HttpResponse('1')
+
+
+def reset_show_timer(request):
+	if not request.user.is_authenticated:
+		return HttpResponse('', status = 500)
+
+	if not request.user.profile.admin_access:
+		return HttpResponse('', status = 500)
+
+	themes = Theme.objects.all().order_by('number')
+	for theme in themes:
+		theme.show_timer = False
+		theme.save()
+	return HttpResponse('1')
+
+	
 @csrf_exempt
 def current(request):
 	if not request.user.is_authenticated:
@@ -303,6 +335,7 @@ def get_data(request):
 		data['url'] = protocol + '://' + current_site.domain + '/vote/' + theme.theme_token
 		data['active'] = theme.active
 		data['zoom'] = theme.zoom
+		data['show_timer'] = theme.show_timer
 
 		if theme.active:
 			data['seconds'] = int(theme.count)

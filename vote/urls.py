@@ -33,6 +33,8 @@ urlpatterns += [
     path('ajax/allow-cookies/', allow_cookies, name = 'ajax_allow_cookies'),
     path('ajax/zoom/', zoom, name = 'ajax_zoom'),
     path('ajax/unzoom/', unzoom, name = 'ajax_unzoom'),
+    path('ajax/set_show_timer/', set_show_timer, name = 'ajax_set_show_timer'),
+    path('ajax/reset_show_timer/', reset_show_timer, name = 'ajax_reset_show_timer'),
 
     path('ajax/current/', current, name = 'ajax_current'),
     path('ajax/active/', active, name = 'ajax_active'),

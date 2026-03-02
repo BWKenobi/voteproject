@@ -5,7 +5,7 @@
 {% block content %}
 	<div class="row align-middle p-5">
 		<div class="col-md-12" style="font-size: 24px;">
-			<b>Результаты</b> <button type="button" class="btn {% if zoom %}btn-primary{% else %}btn btn-secondary{% endif %} zoom" style="float: right;">ZOOM</button>
+			<b>Результаты</b>
 		</div>
 	</div>
 
@@ -14,7 +14,9 @@
 			<div class="col-md-12">
 				<b>{{ theme.title }}</b><em> ({{ theme.count }} сек.)</em>
 				<button type="button" class="btn {% if theme.current %}btn-primary{% else %}btn btn-secondary{% endif %} current" style="float: right;" data-pk="{{ theme.pk }}">Акивное</button>
-					<button type="button" class="btn {% if theme.active %}btn-primary{% else %}btn btn-secondary{% endif %} active_theme" style="float: right; margin-right: 20px;" data-pk="{{ theme.pk }}">СТАРТ</button>
+				<button type="button" class="btn {% if theme.active %}btn-primary{% else %}btn btn-secondary{% endif %} active_theme" style="float: right; margin-right: 20px;" data-pk="{{ theme.pk }}">СТАРТ</button>
+				<button type="button" class="btn {% if zoom %}btn-primary{% else %}btn btn-secondary{% endif %} zoom" style="float: right; margin-right: 20px;">ZOOM</button>
+				<button type="button" class="btn {% if show_timer %}btn-primary{% else %}btn btn-secondary{% endif %} show_timer" style="float: right; margin-right: 20px;">ТАЙМЕР</button>
 			</div>
 		</div>
 		<div class="text-left mt-3 px-5">
@@ -49,12 +51,30 @@
 			$('.zoom').click(function(){
 				if ($(this).hasClass('btn-primary')){
 					url = "{% url 'ajax_unzoom' %}";
-					$(this).removeClass('btn-primary');
-					$(this).addClass('btn-secondary');
+					$('.zoom').removeClass('btn-primary');
+					$('.zoom').addClass('btn-secondary');
 				}else{
 					url = "{% url 'ajax_zoom' %}";
-					$(this).addClass('btn-primary');
-					$(this).removeClass('btn-secondary');
+					$('.zoom').addClass('btn-primary');
+					$('.zoom').removeClass('btn-secondary');
+				}
+
+				$.ajax({
+					url: url,
+					success: function(data){
+					}
+				});
+			});
+			
+			$('.show_timer').click(function(){
+				if ($(this).hasClass('btn-primary')){
+					url = "{% url 'ajax_reset_show_timer' %}";
+					$('.show_timer').removeClass('btn-primary');
+					$('.show_timer').addClass('btn-secondary');
+				}else{
+					url = "{% url 'ajax_set_show_timer' %}";
+					$('.show_timer').addClass('btn-primary');
+					$('.show_timer').removeClass('btn-secondary');
 				}
 
 				$.ajax({

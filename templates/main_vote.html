@@ -28,32 +28,26 @@
   <!-- LIST -->
   <div class="content">
     <div class="column" id="left"></div>
+    <div class="column" id="center">
+      <div class="timer-block qr-hide">
+        <div class="timer">
+          <div id="timer_1"></div><div>:</div><div id="timer_2"></div>
+        </div>
+        <div class="timer-label">до окончания голосования</div>
+      </div>
+
+      <div class="qr-block qr-hide">
+        <div class="qr" id="qrcode"></div>
+      </div>
+
+      <div class="main-block">
+        <div class="qr" id="qrcode">
+          <canvas width="800" height="800" style="display: none;"></canvas>
+          <img src="{% static 'img/main.png' %}" style="display: block;"></div>
+      </div>
+    </div>
     <div class="column" id="right"></div>
   </div>
-
-  <!-- FOOTER -->
-  <div class="footer">
-    <div class="timer-block" style="margin-left: 100px">
-      <div class="timer" id="timer"></div>
-      <div class="timer-label">до окончания голосования</div>
-    </div>
-
-    
-
-    <div class="timer-block" style="margin-right: 100px; text-align: right;">
-      <div class="timer" id="timer_2"></div>
-      <div class="timer-label">до окончания голосования</div>
-    </div>
-
-    <div class="qr-block qr-hide">
-      <!-- <div class="qr-text">
-        Наведите камеру<br>
-        для голосования
-      </div> -->
-      <div class="qr" id="qrcode"></div>
-    </div>
-  </div>
-
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
@@ -62,7 +56,7 @@
 <script>
   const items = [
     {% for vote_part in vote_parts %}
-    "<div class='text'><span class='number'>{{ vote_part.number}}.</span> {{ vote_part.name }} - <span class='ansamble'>{{ vote_part.sub_name }}</span></div><div class='votes' id='v{{ forloop.counter }}' data-pk='{{ vote_part.pk }}'>{{ vote_counts|lookup:vote_part.pk }}</div>",
+    "<div class='text'><span class='number'>{{ vote_part.number}}.</span> {{ vote_part.name }}<br><span class='ansamble'>{{ vote_part.sub_name }}</span></div><div class='votes' id='v{{ forloop.counter }}' data-pk='{{ vote_part.pk }}'>{{ vote_counts|lookup:vote_part.pk }}</div>",
     {% endfor %}
   ];
 
@@ -141,7 +135,7 @@ function renderColumns() {
 
   // TIMER
   let seconds = 5 * 60;
-  const timerEl = document.getElementById("timer");
+  const timerEl_1 = document.getElementById("timer_1");
   const timerEl_2 = document.getElementById("timer_2");
 
   setInterval(() => {
@@ -159,18 +153,26 @@ function renderColumns() {
         m = String(Math.floor(data['seconds'] / 60)).padStart(2, "0");
         s = String(data['seconds'] % 60).padStart(2, "0");
 
-        timerEl.textContent = `${m}:${s}`;
-        timerEl_2.textContent = `${m}:${s}`;
+        timerEl_1.textContent = `${m}`;
+        timerEl_2.textContent = `${s}`;
 
-        if (data['active'])
+        if (data['active']){
           $('.qr-block').removeClass('qr-hide');
-        else
+          $('.main-block').addClass('qr-hide');
+        }else{
           $('.qr-block').addClass('qr-hide');
+          $('.main-block').removeClass('qr-hide');
+        }
+
+        if (data['active'] && data['show_timer'])
+          $('.timer-block').removeClass('qr-hide');
+        else
+          $('.timer-block').addClass('qr-hide');
 
         if (data['zoom'])
-          $('.qr-block #qrcode img').addClass('qr-scale');
+          $('.qr-block').addClass('qr-scale');
         else
-          $('.qr-block #qrcode img').removeClass('qr-scale');
+          $('.qr-block').removeClass('qr-scale');
 
         
         // for (const [key, value] of Object.entries(data['vote_counts'])) {
@@ -192,14 +194,6 @@ function renderColumns() {
     text: "{{ url }}",
     width: 800,
     height: 800
-  });
-
-  $('#qrcode img').click(function(){
-    if ($(this).hasClass('qr-scale'))
-      $(this).removeClass('qr-scale');
-    else
-      $(this).addClass('qr-scale');
-
   });
 </script>
 

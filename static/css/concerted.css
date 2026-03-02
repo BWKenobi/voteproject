@@ -85,7 +85,7 @@ body {
 .content {
   flex: 1;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   column-gap: 48px;
 
   flex: 1 0 auto;
@@ -109,6 +109,7 @@ body {
   );
   border-radius: 14px;
   box-shadow: 0 10px 28px rgba(0,0,0,0.45);
+  min-height: 110px;
 }
 
 .item {
@@ -149,32 +150,71 @@ body {
 }
 
 .timer-block {
-  text-align: left;
-  opacity: 0;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 50px;
+  transition: opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .timer {
+  display: flex;
+  justify-content: center;  /* ✅ Центрирует содержимое */
+  align-items: baseline;    /* ✅ Выравнивает по нижнему краю текста */
   font-size: 124px;
   font-weight: 700;
   color: #ffd36a;
   letter-spacing: 2px;
 }
 
-.timer-label {
-  font-size: 24px;
-  opacity: 0.8;
-  margin-top: 6px;
-  text-shadow: 2px 2px 2px #000000;
+#timer_1, #timer_2 {
+  flex: 1;           /* ✅ Равная ширина */
+  text-align: left; /* ✅ Центрирование текста внутри */
+  min-width: 0;      /* ✅ Для обрезки длинных чисел */
 }
 
-.qr-block {
+#timer_1{
+  text-align: right;
+}
+
+.timer-label {
+  font-size: 36px;
+  margin-top: 6px;
+  text-shadow: 
+    -0   -1px 3px #4A1D04,
+     0   -1px 3px #4A1D04,
+    -0    1px 3px #4A1D04,
+     0    1px 3px #4A1D04,
+    -1px -0   3px #4A1D04,
+     1px -0   3px #4A1D04,
+    -1px  0   3px #4A1D04,
+     1px  0   3px #4A1D04,
+    -1px -1px 3px #4A1D04,
+     1px -1px 3px #4A1D04,
+    -1px  1px 3px #4A1D04,
+     1px  1px 3px #4A1D04,
+    -1px -1px 3px #4A1D04,
+     1px -1px 3px #4A1D04,
+    -1px  1px 3px #4A1D04,
+     1px  1px 3px #4A1D04;
+  text-align: center;
+  margin-top: -20px;
+}
+
+.qr-block, .main-block {
   display: flex;
   align-items: center;
   gap: 20px;
   position: absolute;
-  bottom: 40px;
+  /*bottom: 40px;*/
   left: 50%;
+  top: 200px;
   transform: translateX(-50%);
+  transition: top 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.main-block{
+  opacity: 0.8;
 }
 
 .qr {
@@ -185,14 +225,17 @@ body {
 }
 
 .qr img {
-  height: 220px;
+  height: 600px;
   transition: height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   animation: appear 0.8s ease-out forwards;
 }
 
 /* Исправлено: qr_scale → .qr-scale */
-.qr-scale {
-  height: 70vh !important;
+.qr-scale{
+  top: 3vh;
+}
+.qr-scale img{
+  height: 90vh !important;
   z-index: 2000;
 }
 
