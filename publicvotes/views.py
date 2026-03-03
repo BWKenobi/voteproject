@@ -201,10 +201,10 @@ def add_vote(request):
 
 	if request.method=='POST':
 		pk = request.POST['pk']
-		votepart = VotePart.objects.filter(pk = pk).first()
+		votepart = VotePart.objects.filter(pk = pk, theme__active = True).first()
+
 		if votepart:
 			vote_count = VoteCount.objects.filter(session_token = session_token, vote_part = votepart).first()
 			if not vote_count:
-			
 				VoteCount.objects.create(session_token = session_token, vote_part = votepart)
 	return HttpResponse('1')
