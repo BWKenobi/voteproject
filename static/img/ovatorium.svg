@@ -1,0 +1,60 @@
+<svg width="1000" height="1000" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
+
+  <defs>
+    <!-- Радиальный свет -->
+    <radialGradient id="metalGlow" cx="50%" cy="26%" r="60%">
+      <stop offset="0%" stop-color="#1F2226" stop-opacity="0.9"/>
+      <stop offset="40%" stop-color="#0069d9" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#0069d9" stop-opacity="0.2"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Внешний круг -->
+  <circle cx="500" cy="500" r="400"
+          fill="none"
+          stroke="#0069d9"
+          stroke-width="18"/>
+
+  <!-- Верхние дуги со светом -->
+  <path d="M 120 500 A 380 380 0 0 1 880 500"
+        fill="none"
+        stroke="url(#metalGlow)"
+        stroke-width="2"/>
+
+  <path d="M 140 500 A 360 360 0 0 1 860 500"
+        fill="none"
+        stroke="url(#metalGlow)"
+        stroke-width="4"/>
+
+  <!-- Название -->
+  <text
+    x="500"
+    y="430"
+    text-anchor="middle"
+    fill="#0069d9"
+    font-family="Montserrat, Arial, sans-serif"
+    font-size="75"
+    letter-spacing="18">
+    ОВАТОРИУМ
+  </text>
+
+  <!-- Нижние дуги -->
+  <path d="M 200 500 A 300 300 0 0 0 800 500"
+        fill="none"
+        stroke="#0069d9"
+        stroke-width="14"/>
+
+  <path d="M 280 500 A 220 220 0 0 0 720 500"
+        fill="none"
+        stroke="#0069d9"
+        stroke-width="14"/>
+
+  <path d="M 360 500 A 140 140 0 0 0 640 500"
+        fill="none"
+        stroke="#0069d9"
+        stroke-width="14"/>
+
+  <!-- Центральная сцена -->
+  <circle cx="500" cy="500" r="22" fill="#0069d9"/>
+
+</svg>
