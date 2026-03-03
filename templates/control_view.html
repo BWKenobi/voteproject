@@ -14,11 +14,20 @@
 			<div class="col-md-5 col-12" style="line-height: 56px;">
 				<b>{{ theme.title }}</b><em> ({{ theme.count }} сек.)</em>
 			</div>
-			<div class="col-md-7 col-12">
-				<button type="button" class="btn {% if theme.current %}btn-primary{% else %}btn btn-secondary{% endif %} current" style="float: right;" data-pk="{{ theme.pk }}">Акивное</button>
-				<button type="button" class="btn {% if theme.active %}btn-primary{% else %}btn btn-secondary{% endif %} active_theme" style="float: right; margin-right: 20px;" data-pk="{{ theme.pk }}">СТАРТ</button>
-				<button type="button" class="btn {% if zoom %}btn-primary{% else %}btn btn-secondary{% endif %} zoom" style="float: right; margin-right: 20px;">ZOOM</button>
-				<button type="button" class="btn {% if show_timer %}btn-primary{% else %}btn btn-secondary{% endif %} show_timer" style="float: right; margin-right: 20px;">ТАЙМЕР</button>
+			<style>
+				@media (min-width: 576px) {
+					.btn-mobile-sm {
+						padding: .375rem .75rem; /* Стандартные паддинги btn */
+						font-size: 1rem;       /* Стандартный размер шрифта */
+						line-height: 1.5;
+					}
+				}
+			</style>
+			<div class="col-md-7 col-12 d-flex justify-content-end flex-nowrap">
+				<button type="button" class="btn btn-sm btn-mobile-sm {% if show_timer %}btn-primary{% else %}btn btn-secondary{% endif %} show_timer mr-1">ТАЙМЕР</button>
+				<button type="button" class="btn btn-sm btn-mobile-sm {% if zoom %}btn-primary{% else %}btn btn-secondary{% endif %} zoom mr-1">ZOOM</button>
+				<button type="button" class="btn bbtn-sm btn-mobile-sm {% if theme.active %}btn-primary{% else %}btn btn-secondary{% endif %} active_theme mr-1" data-pk="{{ theme.pk }}">СТАРТ</button>
+				<button type="button" class="btn btn-sm btn-mobile-sm {% if theme.current %}btn-primary{% else %}btn btn-secondary{% endif %} current mr-1" data-pk="{{ theme.pk }}">АКТИВНОЕ</button>
 			</div>
 		</div>
 		<div class="text-left mt-3 px-0 px-md-5">
