@@ -3,23 +3,25 @@
 {% load static %}
 
 {% block content %}
-	<div class="row align-middle p-5">
+	<div class="row align-middle p-2 p-md-5">
 		<div class="col-md-12" style="font-size: 24px;">
 			<b>Результаты</b>
 		</div>
 	</div>
 
 	{% for theme in themes %}
-		<div class="row align-middle px-5">
-			<div class="col-md-12">
+		<div class="row align-middle px-2 px-md-5">
+			<div class="col-md-5 col-12" style="line-height: 56px;">
 				<b>{{ theme.title }}</b><em> ({{ theme.count }} сек.)</em>
+			</div>
+			<div class="col-md-7 col-12">
 				<button type="button" class="btn {% if theme.current %}btn-primary{% else %}btn btn-secondary{% endif %} current" style="float: right;" data-pk="{{ theme.pk }}">Акивное</button>
 				<button type="button" class="btn {% if theme.active %}btn-primary{% else %}btn btn-secondary{% endif %} active_theme" style="float: right; margin-right: 20px;" data-pk="{{ theme.pk }}">СТАРТ</button>
 				<button type="button" class="btn {% if zoom %}btn-primary{% else %}btn btn-secondary{% endif %} zoom" style="float: right; margin-right: 20px;">ZOOM</button>
 				<button type="button" class="btn {% if show_timer %}btn-primary{% else %}btn btn-secondary{% endif %} show_timer" style="float: right; margin-right: 20px;">ТАЙМЕР</button>
 			</div>
 		</div>
-		<div class="text-left mt-3 px-5">
+		<div class="text-left mt-3 px-0 px-md-5">
 			<table class="table">
 				<thead>
 					<tr>

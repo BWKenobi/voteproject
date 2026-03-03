@@ -39,19 +39,58 @@
             <img src="{% static 'img/ajax-loader.svg' %}">
         </div>
     </div>
+    <style>
+    </style>
     {% if request.user.is_authenticated %}
-        <div class="navbar navbar-dark fixed-top flex-md-nowrap px-5 shadow-sm pt-2 bg-light">
-            <nav class="my-2 my-md-0 mr-md-3 adaptive">
-                <a class="py-2 text-secondary text-uppercase mr-5 {% if menu != 'blocks' and menu != 'subblocks' %}active{% endif %}" href="{% url 'control' %}">Главная</a>
-                <a class="py-2 text-secondary text-uppercase mr-5 {% if menu == 'blocks' %}active{% endif %}" href="{% url 'publicvotes:themes' %}">Блоки голосований</a>
-                <a class="py-2 text-secondary text-uppercase mr-5  {% if menu == 'subblocks' %}active{% endif %}" href="{% url 'publicvotes:voteparts' %}">Пункты голосований</a>
-                <a class="py-2 text-secondary text-uppercase" href="{% url 'concerted' %}" target="_blank">LED-экран</a>
-            </nav>
-        </div>
+        <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top shadow-sm pt-2 px-2 px-md-5">
+            <div class="container-fluid">
+                <!-- Бренд -->
+                <!-- <a class="navbar-brand text-uppercase fw-bold" href="{% url 'control' %}">App</a> -->
+                
+                <!-- Тогглер для мобильного -->
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <!-- Меню с дропдаунами -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto mb-2 mb-md-0 adaptive">
+                        <!-- Главная -->
+                        <li class="nav-item">
+                            <a class="nav-link py-2 text-secondary text-uppercase {% if menu != 'blocks' and menu != 'subblocks' %}active fw-bold{% else %}fw-normal{% endif %}" href="{% url 'control' %}">Главная</a>
+                        </li>
+                        
+                        <!-- Дропдаун Блоки -->
+                        <li class="nav-item">
+                            <a class="nav-link py-2 text-secondary text-uppercase {% if menu == 'blocks' %}active fw-bold{% else %}fw-normal{% endif %}" href="{% url 'publicvotes:themes' %}">
+                                Блоки голосований
+                            </a>
+                        </li>
+                        
+                        <!-- Дропдаун Пункты -->
+                        <li class="nav-item">
+                            <a class="nav-link py-2 text-secondary text-uppercase {% if menu == 'subblocks' %}active fw-bold{% else %}fw-normal{% endif %}" href="{% url 'publicvotes:voteparts' %}">
+                                Пункты голосований
+                            </a>
+                        </li>
+                        
+                        <!-- LED экран -->
+                        <li class="nav-item">
+                            <a class="nav-link py-2 text-secondary text-uppercase" href="{% url 'concerted' %}" target="_blank">LED-экран</a>
+                        </li>
+                        <hr style="margin: 0;">
+                        <!-- Выход -->
+                        <li class="nav-item">
+                            <a class="nav-link py-2 text-secondary text-uppercase" href="{% url 'logout' %}" target="_blank">Выход</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
     {% endif %}
 
-        <div class="container-fluid d-inline-block p-5 mb-5 mt-5 h-100">
-            <main role="main" class="col-md-12 ml-sm-auto col-lg-12 px-0 shadow bg-light p-5">
+        <div class="container-fluid d-inline-block p-0 p-md-5 mb-0 mb-md-5 mt-5 h-100">
+            <main role="main" class="col-md-12 ml-sm-auto col-lg-12 shadow bg-light p-0 p-md-5">
 
                 {% block content %}
                 {% endblock %}
