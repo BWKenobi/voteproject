@@ -10,7 +10,7 @@
 	</div>
 
 	{% for theme in themes %}
-		<div class="row align-middle px-2 px-md-5">
+		<div class="row align-middle pl-2 px-md-5">
 			<div class="col-md-5 col-12" style="line-height: 56px;">
 				<b>{{ theme.title }}</b><em> ({{ theme.count }} сек.)</em>
 			</div>
@@ -23,7 +23,7 @@
 					}
 				}
 			</style>
-			<div class="col-md-7 col-12 d-flex justify-content-end flex-nowrap">
+			<div class="col-md-7 col-12 d-flex justify-content-end flex-nowrap pr-1">
 				<button type="button" class="btn btn-sm btn-mobile-sm {% if show_timer %}btn-primary{% else %}btn btn-secondary{% endif %} show_timer mr-1">ТАЙМЕР</button>
 				<button type="button" class="btn btn-sm btn-mobile-sm {% if zoom %}btn-primary{% else %}btn btn-secondary{% endif %} zoom mr-1">ZOOM</button>
 				<button type="button" class="btn bbtn-sm btn-mobile-sm {% if theme.active %}btn-primary{% else %}btn btn-secondary{% endif %} active_theme mr-1" data-pk="{{ theme.pk }}">СТАРТ</button>
