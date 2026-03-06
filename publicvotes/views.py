@@ -112,10 +112,14 @@ def view_voteparts(request):
 	if not request.user.profile.admin_access:
 		return redirect ('home')
 
-	voteparts = VotePart.objects.all().order_by('theme__number', 'number')
+	themes = Theme.objects.all().order_by('number')
+	voteparts = {}
+	for theme in themes:
+		voteparts[theme.pk] = VotePart.objects.filter(theme = theme).order_by('number')
 
 	args = {
 		'menu': 'subblocks',
+		'themes': themes,
 		'voteparts': voteparts
 	}
 	return render(request, 'publicvotes/view_voteparts.html', args)
@@ -127,7 +131,7 @@ def delete_votepart(request, pk = None):
 		return redirect('home')
 
 	VotePart.objects.filter(pk = pk).delete()
-	return redirect('publicvotes:view_voteparts')
+	return redirect('publicvotes:voteparts')
 
 
 @login_required(login_url='/login/')

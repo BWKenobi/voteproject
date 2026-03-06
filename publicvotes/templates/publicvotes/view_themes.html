@@ -3,16 +3,23 @@
 {% load static %}
 
 {% block content %}
-	<div class="row align-middle px-5">
-		<div class="col-md-6">
-			<b>Блоки голосований</b>
+	<style>
+		@media (max-width: 767.98px) {
+	        .text-right{
+	        	padding-right: 0;
+	        }
+	    }
+	</style>
+	<div class="row align-middle px-2 px-md-5 mt-5 mt-md-0">
+		<div class="col-6">
+			<b style="line-height: 28px;">Блоки голосований</b>
 		</div>
-		<div class="col-md-6 text-right">
+		<div class="col-6 text-right">
 			<input type="button" value="Добавить" name="add-theme" id="add_theme" class="show-loader">
 		</div>
 	</div>
 
-	<div class="text-left mt-3 px-5">
+	<div class="text-left mt-3 px-md-5">
 		<table class="table">
 			<thead>
 				<tr>
@@ -26,11 +33,32 @@
 					<tr class="">
 						<th scope="row" class="align-middle">{{ theme.number }}</th>
 						<td class="align-middle">{{ theme.title }} <em>({{ theme.count }} сек.)</em></td>
-						<td class="align-middle text-right"><a href="{% url 'publicvotes:edit_theme' pk=theme.pk %}" class="mr-2">изменить</a><a href="{% url 'publicvotes:delete_theme' pk=theme.pk %}">удалить</a></td>
+						<td class="align-middle text-right"><a href="{% url 'publicvotes:edit_theme' pk=theme.pk %}" class="mr-2">изменить</a><a href="{% url 'publicvotes:delete_theme' pk=theme.pk %}" class="delete_theme" data-name="{{ theme.title }}">удалить</a></td>
 					</tr>
 				{% endfor %}
 			</tbody>
 		</table>
+	</div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					...
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+					<button type="button" class="btn btn-primary" id="del_but">Удалить</button>
+				</div>
+			</div>
+		</div>
 	</div>
 {% endblock %}
 
@@ -41,7 +69,21 @@
 			$('#add_theme').click(function (){
 				window.location.href = "{% url 'publicvotes:add_theme' %}";
 			});
-		});
 
+			$('.delete_theme').click(function(){
+				url = $(this).attr('href');
+				name = $(this).attr('data-name');
+
+				$('#deleteModal #exampleModalLabel').text('Удаление!');
+				$('#deleteModal .modal-body').text(name);
+				$('#deleteModal #del_but').attr('data-url', url);
+				$('#deleteModal').modal('show');
+				return false;
+			});
+
+			$('#deleteModal #del_but').click(function(){
+				window.location.href = $('#deleteModal #del_but').attr('data-url');
+			});
+		});
 	</script>
 {% endblock %}

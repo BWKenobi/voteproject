@@ -1,6 +1,6 @@
 {% load static %}
 
-{% with '2.7' as version %}
+{% with '2.9' as version %}
 <!DOCTYPE html>
 <html lang="ru">
     <head>
@@ -99,6 +99,14 @@
                 }
             }
 
+            @media (min-width: 576px) {
+                .btn-mobile-sm {
+                    padding: .375rem .75rem; /* Стандартные паддинги btn */
+                    font-size: 1rem;       /* Стандартный размер шрифта */
+                    line-height: 1.5;
+                }
+            }
+
             .navbar-logo {
                 height: 40px;          /* регулируй по вкусу — обычно 36–48px подходит для navbar */
                 width: auto;           /* чтобы сохранить пропорции */
@@ -108,9 +116,9 @@
 
         </style>
         <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top shadow-sm pt-2 px-3 px-md-5">
-            <div class="container-fluid">
+            <div class="container-fluid px-0">
                 <!-- Бренд -->
-                <img src="{% static 'img/ovatorium.svg' %}" class="navbar-logo">
+                <a href="{% url 'control' %}"><img src="{% static 'img/ovatorium.png' %}" class="navbar-logo"></a>
                 <!-- <a class="navbar-brand text-uppercase fw-bold" href="{% url 'control' %}">App</a> -->
                 
                 <!-- Тогглер для мобильного -->
@@ -147,7 +155,7 @@
                         <hr style="margin: 0;">
                         <!-- Выход -->
                         <li class="nav-item">
-                            <a class="nav-link py-2 text-secondary text-uppercase" href="{% url 'logout' %}" target="_blank">Выход</a>
+                            <a class="nav-link py-2 text-secondary text-uppercase" href="{% url 'logout' %}">Выход</a>
                         </li>
                     </ul>
                 </div>
@@ -180,7 +188,7 @@
                     </div>
                 </div>
                 <div class="button-container">
-                    <button onclick="acceptCookies()">
+                    <button onclick="acceptCookies()" class="btn-sm btn-mobile-sm">
                         Принять
                     </button>
                 </div>

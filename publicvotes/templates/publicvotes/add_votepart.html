@@ -2,18 +2,28 @@
 {% load static %}
 
 {% block content %}
-	<h4 class="display-5 text-center">Новый пункт голосования</h4>
+	<h4 class="display-5 text-center mt-5 mt-md-0">Новый пункт голосования</h4>
 
 	<div class="row">
 		<div class="col-md-6 mx-auto mb-5">
+			<style>
+				@media (max-width: 767.98px) {
+		            form{
+		                padding-left: 1rem;
+		            }
+		            .text-right{
+		            	padding-right: 0;
+		            }
+		        }
+			</style>
 			<form action="" method="post" , autocomplete="false"> {% csrf_token %}
 				{{form.as_p}}
 
 				<div class="row align-middle">
-					<div class="col-md-6 text-left">
+					<div class="col-6 text-left">
 						<a href="{% url 'publicvotes:voteparts' %}">Вернуться</a>
 					</div>
-					<div class="col-md-6 text-right">
+					<div class="col-6 text-right">
 						<input type="submit" value="Добавить">
 					</div>
 				</div>

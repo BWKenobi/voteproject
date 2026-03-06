@@ -5,6 +5,13 @@
 	<h4 class="display-5 text-center">Войти в личный кабинет</h4>
 	<div class="row">
 		<div class="col-md-6 mx-auto mb-5">
+			<style>
+				@media (max-width: 767.98px) {
+		            form{
+		                padding-left: 1rem;
+		            }
+		        }
+			</style>
 			<form action="" method="post"> {% csrf_token %}
 				{{form.as_p}}
 				<div class="row align-middle">

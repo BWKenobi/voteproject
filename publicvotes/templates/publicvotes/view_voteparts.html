@@ -3,36 +3,65 @@
 {% load static %}
 
 {% block content %}
-	<div class="row align-middle px-5">
-		<div class="col-md-6">
+	<style>
+		@media (max-width: 767.98px) {
+	        .text-right{
+	        	padding-right: 0;
+	        }
+	    }
+	</style>
+	<div class="row align-middle px-2 px-md-5 mt-5 mt-md-0">
+		<div class="col-6">
 			<b>Пункты голосований</b>
 		</div>
-		<div class="col-md-6 text-right">
+		<div class="col-6 text-right mt-2 mt-md-0">
 			<input type="button" value="Добавить" name="add-theme" id="add_theme" class="show-loader">
 		</div>
 	</div>
 
-	<div class="text-left mt-3 px-5">
-		<table class="table">
-			<thead>
-				<tr>
-					<th scope="col" class="table-cel-width-5 align-middle">№</th>
-					<th scope="col" class="table-cel-width-25 align-middle">Блок</th>
-					<th scope="col" class="table-cel-width-50 align-middle">Название</th>
-					<th scope="col" class="table-cel-width-20 align-middle text-center"></th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for votepart in voteparts %}
-					<tr class="">
-						<th scope="row" class="align-middle">{{ votepart.number }}</th>
-						<td class="align-middle">{{ votepart.theme.title }}</td>
-						<td class="align-middle">{{ votepart.name }}<br><em>{{ votepart.sub_name }}</em></td>
-						<td class="align-middle text-right"><a href="{% url 'publicvotes:edit_votepart' pk=votepart.pk %}" class="mr-2">изменить</a><a href="{% url 'publicvotes:delete_votepart' pk=votepart.pk %}">удалить</a></td>
+	<div class="text-left mt-3 px-md-5">
+		{% for theme in themes %}
+			<b class="px-2 px-md-5 mb-0">{{ theme.title }}</b>
+			<table class="table">
+				<thead>
+					<tr>
+						<th scope="col" class="table-cel-width-5 align-middle">№</th>
+						<th scope="col" class="table-cel-width-75 align-middle">Название</th>
+						<th scope="col" class="table-cel-width-20 align-middle text-center"></th>
 					</tr>
-				{% endfor %}
-			</tbody>
-		</table>
+				</thead>
+				<tbody>
+					{% for votepart in voteparts|lookup:theme.pk %}
+						<tr class="">
+							<th scope="row" class="align-middle">{{ votepart.number }}</th>
+							<td class="align-middle">{{ votepart.name }}<br><em>{{ votepart.sub_name }}</em></td>
+							<td class="align-middle text-right"><a href="{% url 'publicvotes:edit_votepart' pk=votepart.pk %}" class="mr-2">изменить</a><a href="{% url 'publicvotes:delete_votepart' pk=votepart.pk %}" class="delete_votepart" data-name="{{ votepart.name }}">удалить</a></td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		{% endfor %}
+	</div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					...
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+					<button type="button" class="btn btn-primary" id="del_but">Удалить</button>
+				</div>
+			</div>
+		</div>
 	</div>
 {% endblock %}
 
@@ -43,7 +72,21 @@
 			$('#add_theme').click(function (){
 				window.location.href = "{% url 'publicvotes:add_votepart' %}";
 			});
-		});
 
+			$('.delete_votepart').click(function(){
+				url = $(this).attr('href');
+				name = $(this).attr('data-name');
+
+				$('#deleteModal #exampleModalLabel').text('Удаление!');
+				$('#deleteModal .modal-body').text(name);
+				$('#deleteModal #del_but').attr('data-url', url);
+				$('#deleteModal').modal('show');
+				return false;
+			});
+
+			$('#deleteModal #del_but').click(function(){
+				window.location.href = $('#deleteModal #del_but').attr('data-url');
+			});
+		});
 	</script>
 {% endblock %}
