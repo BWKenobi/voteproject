@@ -56,7 +56,7 @@
 <script>
   const items = [
     {% for vote_part in vote_parts %}
-    "<div class='text'>{% if vote_part.photo %}<div style='background-image: url({{ vote_part.photo.url }}); width: 150px; height: 200px; float: left; margin-right: 20px; background-size: cover; background-position: center; background-repeat: no-repeat;'></div>{% else %}<span class='number'>{{ vote_part.number}}.</span>{% endif %} {{ vote_part.name }}<br><span class='ansamble'>{{ vote_part.sub_name }}</span></div><div class='votes' id='v{{ forloop.counter }}' data-pk='{{ vote_part.pk }}'>{{ vote_counts|lookup:vote_part.pk }}</div>",
+    "<div class='text'>{% if vote_part.photo %}<div style='background-image: url({{ vote_part.photo.url }}); width: 120px; height: 150px; float: left; margin-right: 20px; background-size: cover; background-position: center; background-repeat: no-repeat;'></div>{% else %}<span class='number'>{{ vote_part.number}}.</span>{% endif %} {{ vote_part.name }}<br><span class='ansamble'>{{ vote_part.sub_name }}</span></div><div class='votes' id='v{{ forloop.counter }}' data-pk='{{ vote_part.pk }}'>{{ vote_counts|lookup:vote_part.pk }}</div>",
     {% endfor %}
   ];
 
