@@ -19,7 +19,7 @@ urlpatterns = [
     path('policy', policy_view, name = 'policy'),
 
     path('concerted', concerted_view, name = 'concerted'),
-]
+] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
 
 
 urlpatterns += [

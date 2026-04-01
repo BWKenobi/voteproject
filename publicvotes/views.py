@@ -140,7 +140,7 @@ def add_votepart(request):
 		return redirect('home')
 
 	if request.method=='POST':
-		form = VotePartForm(request.POST, label_suffix='')
+		form = VotePartForm(request.POST, request.FILES, label_suffix='')
 		if form.is_valid():
 			new_votepart = form.save(False)
 			new_votepart.save()
@@ -171,7 +171,7 @@ def edit_votepart(request, pk = None):
 		return redirect('publicvotes:voteparts')
 
 	if request.method=='POST':
-		form = VotePartForm(request.POST, instance=votepart, label_suffix='')
+		form = VotePartForm(request.POST, request.FILES, instance=votepart, label_suffix='')
 
 		if form.is_valid():
 			votepart_form = form.save(False)

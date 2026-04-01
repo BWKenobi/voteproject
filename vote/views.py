@@ -347,6 +347,7 @@ def get_data(request):
 			vote_counts[vote_part.pk] = VoteCount.objects.filter(vote_part = vote_part).count()
 
 		data['vote_counts'] = vote_counts
+		data['main_title'] = theme.main_title
 
 		return HttpResponse(json.dumps(data))
 	return HttpResponse('', status = 500)

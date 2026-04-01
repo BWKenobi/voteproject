@@ -16,7 +16,7 @@
 		            }
 		        }
 			</style>
-			<form action="" method="post" , autocomplete="false"> {% csrf_token %}
+			<form action="" method="post" , autocomplete="false" enctype="multipart/form-data">  {% csrf_token %}
 				{{form.as_p}}
 
 				<div class="row align-middle">
