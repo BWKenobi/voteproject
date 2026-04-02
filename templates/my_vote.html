@@ -130,6 +130,17 @@
 			color: var(--accent);
 		}
 
+		.avatar {
+			width: 60px;
+			height: 80px;
+			flex: 0 0 60px;
+			flex-shrink: 0;
+			background-size: cover;
+			background-position: center;
+			background-repeat: no-repeat;
+			border-radius: 5px;
+		}
+
 		.cookie-banner {
 			position: fixed;
 			bottom: 14px;
@@ -241,7 +252,7 @@
 					if (item.url){
 						const cardHtml = `
 							<div class="card">
-							<div style='background-image: url(${item.url}); width: 60px; height: 80px; float: left; margin-right: 20px; background-size: cover; background-position: center; background-repeat: no-repeat; border-radius: 5px;'></div>
+							<div class="avatar" style='background-image: url(${item.url});'></div>
 							<div class="text">
 							<b data-pk="${item.pk}">${item.name}</b><br>
 							<em>${item.sub_name}</em>
