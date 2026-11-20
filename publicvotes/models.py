@@ -49,7 +49,8 @@ class Theme(models.Model):
 
 	zoom = models.BooleanField("Активное голосования", default=False)
 	show_timer = models.BooleanField("Показывать таймер", default=False)
-	count = models.DecimalField(verbose_name="Номер", max_digits=4, decimal_places=0, default=180, blank=False)
+	count = models.DecimalField(verbose_name="Время голосования (сек.)", max_digits=4, decimal_places=0, default=180, blank=False)
+	curent_count = models.DecimalField(verbose_name="Время голосования (сек.)", max_digits=4, decimal_places=0, default=0, blank=False)
 
 	theme_token = models.CharField(verbose_name="Токен", max_length=250, blank=True)
 

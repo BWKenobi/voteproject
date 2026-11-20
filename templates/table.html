@@ -1,0 +1,19 @@
+{% load objects_extras %}
+{% load static %}
+
+<thead>
+	<tr>
+		<th scope="col" class="table-cel-width-5 align-middle">№</th>
+		<th scope="col" class="table-cel-width-75 align-middle">Название</th>
+		<th scope="col" class="table-cel-width-20 align-middle text-right">Оценка <span>(всего: {{ votes_counts }})</span></th>
+	</tr>
+</thead>
+<tbody>
+	{% for key, val in sorted_counts.items %}
+		<tr class="">
+			<th scope="row" class="align-middle">{{ key.number }}</th>
+			<td class="align-middle">{{ key.name }}<br><em>{{ key.sub_name }}</em></td>
+			<td class="align-middle text-right">{{ val }}</td>
+		</tr>
+	{% endfor %}
+</tbody>

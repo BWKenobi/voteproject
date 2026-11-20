@@ -10,7 +10,7 @@ from django.conf import settings
 
 import base64
 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
@@ -67,10 +67,12 @@ def control_view(request):
 		return redirect ('home')
 
 	themes = Theme.objects.all().order_by('number')
+	votes_counts = {}
 	sorted_counts = {}
 	zoom = False
 	show_timer = False
 	for theme in themes:
+		votes_counts[theme.pk] = 0
 		if theme.zoom:
 			zoom = True
 		if theme.show_timer:
@@ -80,6 +82,7 @@ def control_view(request):
 		voteparts= VotePart.objects.filter(theme = theme).order_by('number')
 		for votepart in voteparts:
 			votepart_counts[votepart] = VoteCount.objects.filter(vote_part = votepart).count()
+			votes_counts[theme.pk] += votepart_counts[votepart]
 
 		sorted_counts[theme.pk] =  dict(sorted(votepart_counts.items(), key=lambda x: x[1], reverse=True))
 
@@ -88,6 +91,7 @@ def control_view(request):
 		'themes': themes,
 		'votepart_counts': votepart_counts,
 		'sorted_counts': sorted_counts,
+		'votes_counts': votes_counts,
 		'zoom': zoom,
 		'show_timer': show_timer,
 	}
@@ -252,6 +256,9 @@ def current(request):
 		if theme:
 			for all_theme in all_themes:
 				all_theme.current = False
+				all_theme.active = False
+				all_theme.show_timer = False
+				all_theme.zoom = False
 				all_theme.save()
 
 			theme.current = True
@@ -276,10 +283,12 @@ def active(request):
 		if theme:
 			for all_theme in all_themes:
 				all_theme.active = False
+				all_theme.show_timer = False
+				all_theme.zoom = False
 				all_theme.save()
 
 			theme.active = True
-			theme.count = 180
+			theme.curent_count = theme.count
 			theme.save()
 		return HttpResponse('1')
 
@@ -301,6 +310,8 @@ def deactive(request):
 		if theme:
 			for all_theme in all_themes:
 				all_theme.active = False
+				all_theme.show_timer = False
+				all_theme.zoom = False
 				all_theme.save()
 		return HttpResponse('1')
 
@@ -317,8 +328,10 @@ def get_data(request):
 	theme = Theme.objects.filter(current = True).first()
 	if theme:
 		if theme.active:
-			if theme.count > 0:
-				theme.count -= 1
+			if theme.curent_count > 0:
+				theme.curent_count -= 1
+				if not theme.show_timer:
+					theme.curent_count = theme.count
 				theme.save()
 			else:
 				theme.active = False
@@ -338,7 +351,7 @@ def get_data(request):
 		data['show_timer'] = theme.show_timer
 
 		if theme.active:
-			data['seconds'] = int(theme.count)
+			data['seconds'] = int(theme.curent_count)
 		else:
 			data['seconds'] = 0
 		vote_counts = {}
@@ -352,3 +365,30 @@ def get_data(request):
 		return HttpResponse(json.dumps(data))
 	return HttpResponse('', status = 500)
 
+
+def get_data_curent(request):
+	if not request.user.is_authenticated:
+		return HttpResponse('', status = 500)
+
+	if not request.user.profile.admin_access:
+		return HttpResponse('', status = 500)
+
+	pk = request.GET['pk']
+	theme = Theme.objects.filter(pk = pk).first()
+	if not theme:
+		return HttpResponse('', status = 500)
+
+	voteparts= VotePart.objects.filter(theme = theme).order_by('number')
+	votepart_counts = {}
+	votes_counts = 0
+	for votepart in voteparts:
+		votepart_counts[votepart] = VoteCount.objects.filter(vote_part = votepart).count()
+		votes_counts += votepart_counts[votepart]
+
+	sorted_counts =  dict(sorted(votepart_counts.items(), key=lambda x: x[1], reverse=True))
+
+
+	data = {}
+	data['counter'] = '(' + str(theme.curent_count) + ' из ' + str(theme.count) + ' сек.)'
+	data['tabe'] = render_to_string('table.html', {'votes_counts': votes_counts, 'sorted_counts': sorted_counts})
+	return JsonResponse(data)

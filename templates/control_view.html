@@ -12,22 +12,23 @@
 	{% for theme in themes %}
 		<div class="row align-middle pl-2 px-md-5">
 			<div class="col-md-5 col-12" style="line-height: 56px;">
-				<b>{{ theme.title }}</b><em> ({{ theme.count }} сек.)</em>
+				<b>{{ theme.title }}</b> <em data-pk="{{ theme.pk }}">({{ theme.curent_count }} из {{ theme.count }} сек.)</em>
 			</div>
-			<div class="col-md-7 col-12 d-flex justify-content-end flex-nowrap pr-1">
-				<button type="button" class="btn btn-sm btn-mobile-sm {% if show_timer %}btn-primary{% else %}btn btn-secondary{% endif %} show_timer mr-1 {% if not theme.current %}hide{% endif %} hide-button" data-pk="{{ theme.pk }}">ТАЙМЕР</button>
-				<button type="button" class="btn btn-sm btn-mobile-sm {% if zoom %}btn-primary{% else %}btn btn-secondary{% endif %} zoom mr-1 {% if not theme.current %}hide{% endif %} hide-button" data-pk="{{ theme.pk }}">ZOOM</button>
-				<button type="button" class="btn bbtn-sm btn-mobile-sm {% if theme.active %}btn-primary{% else %}btn btn-secondary{% endif %} active_theme mr-1 {% if not theme.current %}hide{% endif %} hide-button" data-pk="{{ theme.pk }}">СТАРТ</button>
-				<button type="button" class="btn btn-sm btn-mobile-sm {% if theme.current %}btn-primary{% else %}btn btn-secondary{% endif %} current mr-1" data-pk="{{ theme.pk }}">АКТИВНОЕ</button>
+			<div class="col-md-7 col-12 d-flex justify-content-end flex-nowrap pr-md-2 pr-0">
+				<button type="button" class="btn btn btn-mobile-sm {% if show_timer %}btn-primary{% else %}btn btn-secondary{% endif %} show_timer mr-1 {% if not theme.current %}hide{% endif %} hide-button" data-pk="{{ theme.pk }}">ТАЙМЕР</button>
+				<button type="button" class="btn btn btn-mobile-sm {% if zoom %}btn-primary{% else %}btn btn-secondary{% endif %} zoom mr-1 {% if not theme.current %}hide{% endif %} hide-button" data-pk="{{ theme.pk }}">ZOOM</button>
+				<button type="button" class="btn bbtn btn-mobile-sm {% if theme.active %}btn-primary{% else %}btn btn-secondary{% endif %} active_theme mr-1 {% if not theme.current %}hide{% endif %} hide-button" data-pk="{{ theme.pk }}">СТАРТ</button>
+				<button type="button" class="btn bbtn btn-mobile-sm {% if not theme.active %}btn-primary{% else %}btn btn-secondary{% endif %} deactive_theme mr-1 {% if not theme.current %}hide{% endif %} hide-button" data-pk="{{ theme.pk }}">СТОП</button>
+				<button type="button" class="btn btn btn-mobile-sm {% if theme.current %}btn-primary{% else %}btn btn-secondary{% endif %} current mr-1" data-pk="{{ theme.pk }}">АКТИВНОЕ</button>
 			</div>
 		</div>
 		<div class="text-left mt-3 px-0 px-md-5">
-			<table class="table">
+			<table class="table" data-pk="{{ theme.pk }}">
 				<thead>
 					<tr>
 						<th scope="col" class="table-cel-width-5 align-middle">№</th>
 						<th scope="col" class="table-cel-width-75 align-middle">Название</th>
-						<th scope="col" class="table-cel-width-20 align-middle text-center">Оценка</th>
+						<th scope="col" class="table-cel-width-20 align-middle text-right">Оценка <span>(всего: {{ votes_counts|lookup:theme.pk }})</span></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -49,7 +50,13 @@
 {% block scripts %}
 	{{ block.super }}
 	<script type="text/javascript">
+		let timerId = null;
+
 		$(document).ready(function() {
+			element = $('.active_theme.btn-primary');
+			if (element.length > 0)
+				start_viewing();
+
 			$('.zoom').click(function(){
 				if ($(this).hasClass('btn-primary')){
 					url = "{% url 'ajax_unzoom' %}";
@@ -88,16 +95,30 @@
 
 			$('.current').click(function(){
 				if ($(this).hasClass('btn-secondary')){
+					clearInterval(timerId);
+
 					pk = $(this).attr('data-pk');
 
-					$('.current').removeClass('btn-primary')
-					$('.current').addClass('btn-secondary')
+					$('.current').removeClass('btn-primary');
+					$('.current').addClass('btn-secondary');
 
 					$('.hide-button').addClass('hide');
 					$('.hide-button[data-pk=' + pk + ']').removeClass('hide');
 
-					$(this).addClass('btn-primary')
-					$(this).removeClass('btn-secondary')
+					$(this).addClass('btn-primary');
+					$(this).removeClass('btn-secondary');
+
+					$('.active_theme').removeClass('btn-primary');
+					$('.active_theme').addClass('btn-secondary');
+
+					$('.deactive_theme').addClass('btn-primary');
+					$('.deactive_theme').removeClass('btn-secondary');
+
+					$('.show_timer').removeClass('btn-primary');
+					$('.show_timer').addClass('btn-secondary');
+
+					$('.zoom').removeClass('btn-primary');
+					$('.zoom').addClass('btn-secondary');
 
 					var formData = new FormData();
 					formData.append('pk', pk);
@@ -116,36 +137,93 @@
 			});
 
 			$('.active_theme').click(function(){
-				if ($(this).hasClass('btn-secondary')){
+				element = $(this);
+
+				if ($(element).hasClass('btn-secondary')){
 					url = "{% url 'ajax_active' %}";
-					$('.active_theme').removeClass('btn-primary')
-					$('.active_theme').addClass('btn-secondary')
+					$('.active_theme').removeClass('btn-primary');
+					$('.active_theme').addClass('btn-secondary');
+					$('.deactive_theme').removeClass('btn-primary');
+					$('.deactive_theme').addClass('btn-secondary');
 
-					$(this).addClass('btn-primary')
-					$(this).removeClass('btn-secondary')
-				}else{
-					url = "{% url 'ajax_deactive' %}";
-					$('.active_theme').removeClass('btn-primary')
-					$('.active_theme').addClass('btn-secondary')
+					pk = $(element).attr('data-pk');
+
+					var formData = new FormData();
+					formData.append('pk', pk);
+
+					$.ajax({
+					url: url,
+						type: 'POST',
+						data: formData,
+						cache: false,
+						contentType: false,
+						processData: false,
+						success: function(data) { 
+							$(element).addClass('btn-primary');
+							$(element).removeClass('btn-secondary');
+							start_viewing();
+						},
+					});
 				}
+			});
 
-				pk = $(this).attr('data-pk');
+			$('.deactive_theme').click(function(){
+				element = $(this);
 
-				var formData = new FormData();
-				formData.append('pk', pk);
+				if ($(element).hasClass('btn-secondary')){
+					clearInterval(timerId);
 
-				$.ajax({
-				url: url,
-					type: 'POST',
-					data: formData,
-					cache: false,
-					contentType: false,
-					processData: false,
-					success: function(data) { 
-					},
-				});
+					url = "{% url 'ajax_deactive' %}";
+					$('.active_theme').removeClass('btn-primary');
+					$('.active_theme').addClass('btn-secondary');
+					$('.active_theme').removeClass('btn-primary');
+					$('.active_theme').addClass('btn-secondary');
+					$('.show_timer').removeClass('btn-primary');
+					$('.show_timer').addClass('btn-secondary');
+					$('.zoom').removeClass('btn-primary');
+					$('.zoom').addClass('btn-secondary');
 
+					pk = $(element).attr('data-pk');
+
+					var formData = new FormData();
+					formData.append('pk', pk);
+
+					$.ajax({
+					url: url,
+						type: 'POST',
+						data: formData,
+						cache: false,
+						contentType: false,
+						processData: false,
+						success: function(data) { 
+							$(element).addClass('btn-primary');
+							$(element).removeClass('btn-secondary');
+						},
+					});
+				}
 			});
 		});
+
+		function start_viewing(){
+			timerId = setInterval(function () {
+				element = $('.active_theme.btn-primary');
+				url = "{% url 'ajax_get_data_curent' %}";
+
+				if (element.length > 0){
+					pk = $(element).attr('data-pk');
+
+					$.ajax({
+						url: url,
+						data: {
+							pk: pk,
+						},
+						success: function(data) { 
+							$('em[data-pk=' + pk + ']').text(data['counter']);
+							$('.table[data-pk=' + pk + ']').html(data['tabe']);
+						},
+					});
+				}
+			}, 2000);
+		}
 	</script>
 {% endblock %}

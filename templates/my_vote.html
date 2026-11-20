@@ -28,12 +28,14 @@
 		}
 
 		body {
-			margin: 0;
-			background:
-			radial-gradient(circle at top, rgba(255,255,255,0.05), transparent 60%),
-			linear-gradient(to bottom, #0b0f14, #05070a);
-			color: var(--text-main);
-			min-height: 100vh;
+		    margin: 0;
+		    min-height: 100vh;
+		    display: flex;
+		    flex-direction: column;
+		    background:
+		        radial-gradient(circle at top, rgba(255,255,255,0.05), transparent 60%),
+		        linear-gradient(to bottom, #0b0f14, #05070a);
+		    color: var(--text-main);
 		}
 
 		header {
@@ -55,10 +57,11 @@
 		}
 
 		.list {
-			padding: 12px 14px 24px;
-			display: flex;
-			flex-direction: column;
-			gap: 12px;
+		    flex: 1;
+		    padding: 12px 14px 24px;
+		    display: flex;
+		    flex-direction: column;
+		    gap: 12px;
 		}
 
 		.card {
@@ -113,17 +116,19 @@
 		}
 
 		footer {
-			text-align: center;
-			padding: 20px;
-			font-size: 1rem;
-			color: var(--text-muted);
-			padding-top: 0;
+		    flex-shrink: 0;
+		    text-align: center;
+		    padding: 20px;
+		    padding-top: 0;
+		    font-size: 1rem;
+		    color: var(--text-muted);
 		}
 
 		.thankyou {
-			display: none;
-			padding: 32px 20px;
-			text-align: center;
+		    display: none;
+		    flex: 1;
+		    padding: 32px 20px;
+		    text-align: center;
 		}
 
 		.thankyou h2 {
@@ -142,6 +147,26 @@
 			background-repeat: no-repeat;
 			border-radius: 5px;
 			margin-right: 20px;
+			cursor: zoom-in;
+		}
+
+		.image-overlay {
+		    position: fixed;
+		    inset: 0;
+		    z-index: 2000;
+		    background: rgba(0, 0, 0, 0.85);
+		    display: none;
+		    align-items: center;
+		    justify-content: center;
+		    padding: 20px;
+		    cursor: zoom-out;
+		}
+
+		.image-overlay img {
+		    max-width: 100%;
+		    max-height: 100%;
+		    border-radius: 8px;
+		    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
 		}
 
 		.cookie-banner {
@@ -202,8 +227,13 @@
 	</div>
 
 	<footer>
-	 	Концертное голосование
+	 	<span style="text-transform: uppercase;">Концертное голосование</span><br>
+	 	<a href="https://vk.ru/averonart" target="_blank" style="color: #ffffff; font-size: 80%; text-decoration: none; font-weight: bold;">разработано AveronArt</a>
 	</footer>
+
+	<div class="image-overlay" id="imageOverlay">
+	    <img id="overlayImage" src="" alt="">
+	</div>
 
 	{% if cookie_flag %}
 		<div class="cookie-banner" id="cookieBanner">
@@ -255,7 +285,7 @@
 					if (item.url){
 						const cardHtml = `
 							<div class="card">
-							<div class="avatar" style='background-image: url(${item.url});'></div>
+							<div class="avatar" style='background-image: url(${item.url});' data-url="${item.url}"></div>
 							<div class="text">
 							<b data-pk="${item.pk}">${item.name}</b><br>
 							<em>${item.sub_name}</em>
@@ -321,6 +351,32 @@
 				        }
 				    });
 				}
+			});
+
+			const $overlay = $("#imageOverlay");
+			const $overlayImage = $("#overlayImage");
+
+			$(document).on("click", ".avatar", function (event) {
+			    event.stopPropagation();
+
+			    const url = $(this).data("url");
+
+			    if (!url) return;
+
+			    $overlayImage.attr("src", url);
+			    $overlay.fadeIn(150);
+			});
+
+			$overlay.on("click", function (event) {
+			    event.stopPropagation();
+			    $overlay.fadeOut(150);
+			});
+
+			$(document).on("click", function (event) {
+			    if ($overlay.is(":visible")) {
+			        event.stopPropagation();
+			        $overlay.fadeOut(150);
+			    }
 			});
 		});
 	</script>
