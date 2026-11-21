@@ -39,8 +39,9 @@ urlpatterns += [
     path('ajax/current/', current, name = 'ajax_current'),
     path('ajax/active/', active, name = 'ajax_active'),
     path('ajax/deactive/', deactive, name = 'ajax_deactive'),
+    path('ajax/reset_theme/', reset_theme, name = 'ajax_reset_theme'),
 
     path('ajax/get_data/', get_data, name = 'ajax_get_data'),
 
-     path('ajax/get_data_curent/', get_data_curent, name = 'ajax_get_data_curent'),
+    path('ajax/get_data_curent/', get_data_curent, name = 'ajax_get_data_curent'),
 ]

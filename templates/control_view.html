@@ -20,6 +20,7 @@
 				<button type="button" class="btn bbtn btn-mobile-sm {% if theme.active %}btn-primary{% else %}btn btn-secondary{% endif %} active_theme mr-1 {% if not theme.current %}hide{% endif %} hide-button" data-pk="{{ theme.pk }}">СТАРТ</button>
 				<button type="button" class="btn bbtn btn-mobile-sm {% if not theme.active %}btn-primary{% else %}btn btn-secondary{% endif %} deactive_theme mr-1 {% if not theme.current %}hide{% endif %} hide-button" data-pk="{{ theme.pk }}">СТОП</button>
 				<button type="button" class="btn btn btn-mobile-sm {% if theme.current %}btn-primary{% else %}btn btn-secondary{% endif %} current mr-1" data-pk="{{ theme.pk }}">АКТИВНОЕ</button>
+				<img src="{% static 'img/reset.png' %}" class="reset-buttot" data-pk="{{ theme.pk }}" data-name="{{ theme.title }}">
 			</div>
 		</div>
 		<div class="text-left mt-3 px-0 px-md-5">
@@ -45,6 +46,26 @@
 			</table>
 		</div>
 	{% endfor %}
+
+	<!-- Modal -->
+	<div class="modal fade" id="resetModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Сбросить голосование?</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+					<button type="button" class="btn btn-primary" id="del_but">Сбросить</button>
+				</div>
+			</div>
+		</div>
+	</div>
 {% endblock %}
 
 {% block scripts %}
@@ -201,6 +222,32 @@
 						},
 					});
 				}
+			});
+
+			$('.reset-buttot').click(function(){
+				pk = $(this).attr('data-pk');
+				name = $(this).attr('data-name');
+				$('#resetModal').attr('data-pk', pk);
+				$('#resetModal .modal-body').text(name);
+				$('#resetModal').modal('show');
+			});
+
+			$('#resetModal #del_but').click(function(){
+				var formData = new FormData();
+				pk = $('#resetModal').attr('data-pk');
+				formData.append('pk', pk);
+
+				$.ajax({
+					url: "{% url 'ajax_reset_theme' %}",
+					type: 'POST',
+					data: formData,
+					cache: false,
+					contentType: false,
+					processData: false,
+					success: function(data) { 
+						document.location.reload();
+					},
+				});
 			});
 		});
 

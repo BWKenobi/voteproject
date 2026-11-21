@@ -66,7 +66,7 @@ def control_view(request):
 	if not request.user.profile.admin_access:
 		return redirect ('home')
 
-	themes = Theme.objects.all().order_by('number')
+	themes = Theme.objects.all().order_by('-number')
 	votes_counts = {}
 	sorted_counts = {}
 	zoom = False
@@ -392,3 +392,21 @@ def get_data_curent(request):
 	data['counter'] = '(' + str(theme.curent_count) + ' из ' + str(theme.count) + ' сек.)'
 	data['tabe'] = render_to_string('table.html', {'votes_counts': votes_counts, 'sorted_counts': sorted_counts})
 	return JsonResponse(data)
+
+
+@csrf_exempt
+def reset_theme(request):
+	if not request.user.is_authenticated:
+		return HttpResponse('', status = 500)
+
+	if not request.user.profile.admin_access:
+		return HttpResponse('', status = 500)
+
+	pk = request.POST['pk']
+	theme = Theme.objects.filter(pk = pk).first()
+	if not theme:
+		return HttpResponse('', status = 500)
+
+	VoteCount.objects.filter(vote_part__theme = theme).delete()
+
+	return HttpResponse()

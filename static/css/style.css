@@ -235,22 +235,32 @@ label{
   transition-timing-function: ease-in-out;
 }
 
+.reset-buttot{
+	width: 56px;
+	cursor: pointer;
+}
+
 @media (max-width: 576px) {
-    #cookie-banner button{
-    	font-size: 0.8rem;
-    }
+  #cookie-banner button{
+  	font-size: 0.8rem;
+  }
 
-    #cookie-banner > div{
-    	gap: 0;
-    }
+  #cookie-banner > div{
+  	gap: 0;
+  }
 
-    #cookie-banner > div > div > div > p{
-    	font-size: 1rem;
-    }
+  #cookie-banner > div > div > div > p{
+  	font-size: 1rem;
+  }
 
-    #cookie-banner > div > div > div > div > p{
-    	font-size: 0.8rem;
-    }
+  #cookie-banner > div > div > div > div > p{
+  	font-size: 0.8rem;
+  }
+
+  .reset-buttot{
+		width: 24px;
+		margin-right: 10px;
+	}
 }
 
 .hide-cookie{
@@ -258,3 +268,6 @@ label{
   padding-top: 0px !important;
   padding-bottom: 0px !important;
 }
+
+
+
