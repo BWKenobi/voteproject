@@ -10,7 +10,7 @@ from .models import Theme, VotePart
 class ThemeForm(forms.ModelForm):
 	class Meta:
 		model = Theme
-		fields = ('number', 'title', 'count', 'main_title')
+		fields = ('number', 'title', 'count', 'main_title', 'show_photo')
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
@@ -18,6 +18,8 @@ class ThemeForm(forms.ModelForm):
 			self.fields[field].widget.attrs.update({'class': 'form-control', 'autocomplete':'false'})
 			self.fields[field].required=True
 
+		self.fields['show_photo'].required=False
+		
 
 class VotePartForm(forms.ModelForm):
 	class Meta:

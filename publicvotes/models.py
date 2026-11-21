@@ -49,6 +49,7 @@ class Theme(models.Model):
 
 	zoom = models.BooleanField("Активное голосования", default=False)
 	show_timer = models.BooleanField("Показывать таймер", default=False)
+	show_photo = models.BooleanField("Показывать фото на главном экране", default=False)
 	count = models.DecimalField(verbose_name="Время голосования (сек.)", max_digits=4, decimal_places=0, default=180, blank=False)
 	curent_count = models.DecimalField(verbose_name="Время голосования (сек.)", max_digits=4, decimal_places=0, default=0, blank=False)
 
