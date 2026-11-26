@@ -30,7 +30,7 @@ class VotePartForm(forms.ModelForm):
 		super().__init__(*args, **kwargs)
 		for field in self.fields:
 			self.fields[field].widget.attrs.update({'class': 'form-control', 'autocomplete':'false'})
-			if field == 'photo':
+			if field == 'photo' or field == 'sub_name':
 				self.fields[field].required=False
 			else:
 				self.fields[field].required=True
